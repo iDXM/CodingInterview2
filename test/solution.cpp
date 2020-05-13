@@ -1,73 +1,41 @@
 #include <iostream>
-#include <vector>
-#include <stack>
+#include <string>
+#include <algorithm>
+
+#define INT_MAX 2147483647
+#define INT_MIN (-INT_MAX-1)
 
 using namespace std;
 
-struct ListNode {
-    int val;
-    ListNode* next;
-    ListNode() : val(0), next(nullptr) {}
-    ListNode(int x) : val(x), next(nullptr) {}
-    ListNode(int x, ListNode* next) : val(x), next(next) {}
-};
-
-ListNode* reverseList(ListNode* head) {
-    stack<ListNode*> nodes;
-    ListNode* ptr = head;
-    while (ptr) {
-        nodes.push(ptr);
-        ptr = ptr->next;
-    }
-    ListNode* pNew = new ListNode(0);
-    ListNode* pptr = pNew;
-    while (!nodes.empty()) {
-        ListNode* temp = nodes.top();
-        pptr->next = temp;
-        pptr = pptr->next;
-        nodes.pop();
-    }
-    pptr->next = nullptr;
-    pptr = pNew->next;
-    delete pNew;
-    return pptr;
-}
-
-ListNode* vectorToList(vector<int> vec) {
-    ListNode* dummyRoot = new ListNode(0);
-    ListNode* ptr = dummyRoot;
-    for (auto item : vec) {
-        ListNode* node = new ListNode(item);
-        ptr->next = node;
-        ptr = ptr->next;
-    }
-    ptr = dummyRoot->next;
-    delete dummyRoot;
-    return ptr;
-}
-
-vector<int> listToVector(ListNode* list) {
-    vector<int> temp;
-    ListNode* ptr = list;
-    while (ptr) {
-        temp.push_back(ptr->val);
-        ptr = ptr->next;
-    }
-    return temp;
-}
-
 int main() {
-    vector<int> nums = { 1,2,3,4,5 };
-    ListNode* pNode = vectorToList(nums);
-    ListNode* pNew = reverseList(pNode);
-    vector<int> res = listToVector(pNew);
-    for (auto i : res) {
-        cout << i << endl;
-    }
-    while (pNode) {
-        cout << pNode->val << endl;
-        pNode = pNode->next;
-    }
-    return 0;
+	int n, k;
+	cin >> n >> k;
+	if (k == 0 || n == 0) {
+		cout << 0 << endl;
+		return 0;
+	}
+	string str;
+	int left = INT_MAX, right = INT_MIN;
+	int offset = 0;
+	for (int i = 0; i < n; ++i) {
+		char ch;
+		cin >> ch;
+		offset += (ch == 'R') ? 1 : -1;
+		left = min(left, offset);
+		right = max(right, offset);
+		str.push_back(ch);
+	}
+	int left_b = left, right_b = right;
+	for (int i = 1; i < k; ++i) {
+		left = left + offset;
+		right = right + offset;
+		left_b = min(left_b, left);
+		right_b = max(right_b, right);
+	}
+	int ans = 0;
+	for (int i = left_b; i <= right_b; ++i) {
+		ans += abs(i);
+	}
+	cout << ans << endl;
+	return 0;
 }
-
